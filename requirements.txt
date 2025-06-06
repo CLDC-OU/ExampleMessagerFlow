@@ -1,0 +1,1 @@
+messager @ git+https://github.com/CLDC-OU/examplemessager.git@latest
