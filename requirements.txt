@@ -1,1 +1,1 @@
-messager @ git+https://github.com/CLDC-OU/examplemessager.git@1.0.0
+messager @ git+https://github.com/CLDC-OU/examplemessager.git@1.0.1
