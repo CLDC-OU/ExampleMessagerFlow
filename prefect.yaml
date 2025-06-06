@@ -1,0 +1,21 @@
+name: example-flow
+deployments:
+  - name: daily-message-prod
+    flow_name: daily_message_flow
+    work_pool: { name: default }
+    pull:
+      - prefect.deployments.steps.git_clone:
+          repository: "https://github.com/CLDC-OU/examplemessagerflow.git"
+          reference: "refs/tags/latest"
+          access_token: "{{ prefect.blocks.github-credentials.dept-bot }}"
+    schedule: {
+      cron: "0 8 * * 1-5",  # Every weekday at 8 AM
+      timezone: "America/Detroit"
+    }
+    parameters:
+      env: "production"
+      config_path: "configs/production.json"
+    environment:
+      EXAMPLE: "example_value"
+    infrastructure:
+      installer: pip
