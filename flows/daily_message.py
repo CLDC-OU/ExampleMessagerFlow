@@ -1,5 +1,5 @@
 from prefect import flow, get_run_logger
-from messager.src import send_message
+from messager.messager import send_message
 
 @flow
 def daily_message_flow(env: str = "production", cfg_file: str = "configs/prod.json") -> None:
