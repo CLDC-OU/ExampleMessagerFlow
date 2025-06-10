@@ -10,6 +10,14 @@ definitions:
       cron: "*/10 * * * *"
       timezone: "America/Detroit"
 
+build:
+  - prefect.deployments.steps.run_shell_script:
+      id: get-latest-tag
+      stream_output: false
+      script:
+        curl -s https://api.github.com/repos/CLDC-OU/examplemessagerflow/releases \
+        | python -c "import sys, json; print(json.load(sys.stdin)[0]['tag_name'])"
+
 deployments:
   - name: message-deployment
     entrypoint: ./flows/daily_message.py:daily_message_flow
@@ -17,7 +25,7 @@ deployments:
       - prefect.deployments.steps.git_clone:
           id: clone_step
           repository: "https://github.com/CLDC-OU/examplemessagerflow.git"
-          reference: "refs/tags/latest"
+          branch: "{{ get-latest-tag.stdout }}"
           access_token: null
       - prefect.deployments.steps.pip_install_requirements:
           directory: "{{ clone_step.directory }}"
