@@ -1,21 +1,31 @@
 name: example-flow
+
+definitions:
+  work_pools:
+    default_work_pool: &default_work_pool
+      name: default
+      work_queue_name: default
+  schedules:
+    every_ten_minutes: &every_ten_minutes
+      cron: "*/10 * * * *"
+      timezone: "America/Detroit"
+
 deployments:
-  - name: daily-message-prod
-    flow_name: daily_message_flow
-    work_pool: { name: default }
+  - name: message-deployment
+    entrypoint: ./flows/daily_message.py:daily_message_flow
     pull:
       - prefect.deployments.steps.git_clone:
+          id: clone_step
           repository: "https://github.com/CLDC-OU/examplemessagerflow.git"
           reference: "refs/tags/latest"
-          access_token: "{{ prefect.blocks.github-credentials.dept-bot }}"
-    schedule: {
-      cron: "0 8 * * 1-5",  # Every weekday at 8 AM
-      timezone: "America/Detroit"
-    }
+          access_token: null
+      - prefect.deployments.steps.pip_install_requirements:
+          directory: "{{ clone_step.directory }}"
+          requirements_file: "requirements.txt"
+    schedule: *every_ten_minutes
+    work_pool: *default_work_pool
     parameters:
       env: "production"
       config_path: "configs/production.json"
     environment:
       EXAMPLE: "example_value"
-    infrastructure:
-      installer: pip
