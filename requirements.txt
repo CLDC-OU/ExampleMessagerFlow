@@ -1,2 +1,2 @@
-messager @ git+https://github.com/CLDC-OU/examplemessager.git@1.1.3
+messager @ git+https://github.com/CLDC-OU/examplemessager.git@1.1.4
 prefect
